@@ -169,7 +169,7 @@ We can enumerate ℤ many paths on the circle: … -2 (! loop ∙ ! loop), -1
 (! loop), 0 (refl _), 1 (loop), 2 (loop ∙ loop), …  Of course, there are
 others, like loop ∙ ! loop, but that has a path-between-paths to
 refl --- we're counting paths "up to homotopy" or "up to the higher
-identity types".  So, intuitively, every loop on the circle is homotopic
+identity types.  So, intuitively, every loop on the circle is homotopic
 to one of the above form.  The other way this equivalence could fail is if
 e.g. loop ≡ refl _, so there wouldn't be as many paths as it looks like.
 But we didn't add any path-between-path constructors to S1,
@@ -220,7 +220,7 @@ module AssumeInts
                     (f : ℤ → X)
                     (z : X)
                     (s : X ≃ X)
-                  → f 0ℤ ≡ z
+                  → f 0ℤ ≡ z 
                   → ((f ∘ fwd succℤ) ∼ (fwd s ∘ f))
                  → (x : ℤ) → f x ≡ ℤ-rec z s x)
     (hSetℤ : is-set ℤ) where

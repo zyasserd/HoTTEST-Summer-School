@@ -38,9 +38,12 @@ open import Solutions7
 Prove the propositional computation law for `J`:
 
 ```agda
-JRefl : {A : Type ℓ} {x : A} (P : (z : A) → x ≡ z → Type ℓ'')
+-- J : {x : A} (P : (y : A) → x ≡ y → Type ℓ'')
+--     (d : P x refl) {y : A} (p : x ≡ y) → P y p
+
+JRefl : {A : Type ℓ} {x : A} (P : (y : A) → x ≡ y → Type ℓ'')
   (d : P x refl) → J P d refl ≡ d
-JRefl P d = {!!}
+JRefl P d = transportRefl d
 ```
 
 ### Exercise 2 (★★)
@@ -58,7 +61,7 @@ transport computes away at `i = i1`.
 ```agda
 fromPathP : {A : I → Type ℓ} {x : A i0} {y : A i1} →
   PathP A x y → transport (λ i → A i) x ≡ y
-fromPathP {A = A} p i = {!!}
+fromPathP {A = A} p i = transp (λ j → A (i ∨ j)) i (p i)
 ```
 
 ### Exercise 3 (★★★)
@@ -87,9 +90,12 @@ toPathP : {A : I → Type ℓ} {x : A i0} {y : A i1} →
   transport (λ i → A i) x ≡ y → PathP A x y
 toPathP {A = A} {x = x} p i =
   hcomp
-    (λ {j (i = i0) → {!!} ;
-        j (i = i1) → {!!} })
-   {!!}
+    (λ { j (i = i0) → x
+       ; j (i = i1) → p j })
+    (basehcomp i)
+   where
+    basehcomp : PathP A x (transport (λ i → A i) x)
+    basehcomp i = transp (λ j → A (i ∧ j)) (~ i) x
 ```
 
 ### Exercise 4 (★)
@@ -100,7 +106,8 @@ lines in hProps, provided their boundary.
 ```agda
 isProp→PathP : {A : I → Type ℓ} (p : (i : I) → isProp (A i))
   (a₀ : A i0) (a₁ : A i1) → PathP A a₀ a₁
-isProp→PathP p a₀ a₁ = {!!}
+-- transport A a₀ ≡ a₁
+isProp→PathP {A} p a₀ a₁ = toPathP ((p i1 _ a₁))
 ```
 
 ### Exercise 5 (★★)
@@ -110,7 +117,9 @@ Prove the following lemma charictarising equality in subtypes:
 ```agda
 Σ≡Prop : {A : Type ℓ} {B : A → Type ℓ'} {u v : Σ A B} (h : (x : A) → isProp (B x))
        → (p : pr₁ u ≡ pr₁ v) → u ≡ v
-Σ≡Prop {B = B} {u = u} {v = v} h p = {!!}
+Σ≡Prop {B = B} {u = u} {v = v} h p i = (p i) , isProp→PathP (λ i → h (p i)) (pr₂ u) (pr₂ v) i
+
+
 ```
 
 ### Exercise 6 (★★★)
@@ -122,5 +131,14 @@ This requires drawing a cube (yes, an actual 3D one)!
 
 ```agda
 isPropIsContr : {A : Type ℓ} → isProp (isContr A)
-isPropIsContr (c0 , h0) (c1 , h1) j = {!!} 
+isPropIsContr (c0 , h0) (c1 , h1) j = (p j) , λ y i → 
+  hcomp (λ k → λ { (i = i0) → p j
+                 ; (i = i1) → h1 y k
+                 ; (j = i0) → h0 (h1 y k) i
+                 ; (j = i1) → h1 y (k ∧ i) } )
+        (p (i ∨ j))
+  where
+    p : c0 ≡ c1
+    p = h0 c1
 ```
+ 

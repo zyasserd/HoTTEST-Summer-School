@@ -120,6 +120,7 @@ bool-≡-char₁ b .b (refl .b) = ⇔-refl
  pr₂ ⇔-refl x = x
 
 true≢false : ¬ (true ≡ false)
+-- ! DONT UNDERSTAND THE DOT NOTATION HERE
 true≢false p = bool-≡-char₁ true false p .pr₁ ⋆
 -- also true≢false ()
 
@@ -139,7 +140,7 @@ bool-≡-char₂ false false (b→b' , b'→b) = refl false
 has-bool-dec-fct : Type → Type
 has-bool-dec-fct A = Σ f ꞉ (A → A → Bool) , (∀ x y → x ≡ y ⇔ (f x y) ≡ true)
 
-decidable-equality-char : (A : Type) → has-decidable-equality A ⇔ has-bool-dec-fct A
+decidable-equality-char : (A : Type) → has-1decidable-equality A ⇔ has-bool-dec-fct A
 pr₁ (decidable-equality-char A) discA = f , f-dec -- left to right implication
   where
   f' : (a b : A) → is-decidable (a ≡ b) → Bool

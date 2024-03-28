@@ -100,10 +100,10 @@ data 𝟚 : Type where
 --
 -- We can introduce Π-syntax if we wish:
 
-Pi : (A : Type) (B : A → Type) → Type
-Pi A B = (x : A) → B x
+Pi : {A : Type} (B : A → Type) → Type
+Pi {A} B = (x : A) → B x
 
-syntax Pi A (λ x → b) = Π x ꞉ A , b
+syntax Pi {A} (λ x → b) = Π x ꞉ A , b
 --                          ↑
 --                         this is typed "\:4" in emacs mode and is not the same as ":".
 --                         (we can't use the normal one unfortunately.)
@@ -229,6 +229,8 @@ Various uses of Σ:
 ```agda
 
 -- Binary sums _+_ ∔
+
+
 
 data _∔_ (A B : Type) : Type where
  inl : A → A ∔ B

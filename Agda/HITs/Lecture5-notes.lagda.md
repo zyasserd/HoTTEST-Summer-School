@@ -185,8 +185,8 @@ module RememberTheseFromLastTime where
   
   from-to-west : ap to (ap from west) ∙ from-to-south ≡ west
   from-to-west = ap to (ap from west) ∙ west ≡⟨ ap (\ H → ap to H ∙ west) (Circle2-rec-west _ _ _ _) ⟩
-                  ap to (refl base) ∙ west    ≡⟨ ∙unit-l west ⟩
-                  west ∎ 
+                 ap to (refl base) ∙ west    ≡⟨ ∙unit-l west ⟩
+                 west ∎ 
   
   from-to-east : ap to (ap from east) ∙ from-to-south ≡ east
   from-to-east = ap to (ap from east) ∙ west ≡⟨ ap (\ H → ap to H ∙ west) (Circle2-rec-east _ _ _ _) ⟩
@@ -297,3 +297,4 @@ full-funext = Inverse λ≡' λ≡η λ≡ λ≡βinv where
 ```
 
 
+ 

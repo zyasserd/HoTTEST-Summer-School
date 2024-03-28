@@ -27,6 +27,7 @@ module Exercises7 where
 
 open import cubical-prelude
 open import Lecture7-notes
+-- open import Lecture8-notes
 ```
 
 ```agda
@@ -41,11 +42,23 @@ private
 ### Exercise 1 (★)
 
 State and prove funExt for dependent functions `f g : (x : A) → B x`
+```agda
+depFunExt : {f g : (x : A) → B x} → (p : (x : A) → f x ≡ g x) → f ≡ g
+depFunExt p i x = p x i
+```
 
 ### Exercise 2 (★)
 
 Generalize the type of ap to dependent function `f : (x : A) → B x`
 (hint: the result should be a `PathP`)
+```agda
+-- ap : (f : A → B) {x y : A} → x ≡ y → f x ≡ f y
+-- ap f p i = f (p i)
+
+apd : (f : (x : A) → B x) {x y : A} → (p : x ≡ y) → PathP (λ i → B (p i)) (f x) (f y)
+apd f p i = f (p i)
+
+```
 
 
 ## Part II: Some facts about (homotopy) propositions and sets
@@ -57,6 +70,10 @@ are defined in `cubical-prelude` in the usual way
 ### Exercise 3 (★)
 
 State and prove that inhabited propositions are contractible
+```agda
+inhabitedPropAreContr : isProp A → A → isContr A
+inhabitedPropAreContr p a = a , (λ y → p a y)
+```
 
 
 ### Exercise 4 (★)
@@ -65,7 +82,7 @@ Prove
 
 ```agda
 isPropΠ : (h : (x : A) → isProp (B x)) → isProp ((x : A) → B x)
-isPropΠ = {!!}
+isPropΠ h f g = depFunExt (λ x → h x (f x) (g x))
 ```
 
 ### Exercise 5 (★)
@@ -74,7 +91,7 @@ Prove the inverse of `funExt` (sometimes called `happly`):
 
 ```agda
 funExt⁻ : {f g : (x : A) → B x} → f ≡ g → ((x : A) → f x ≡ g x)
-funExt⁻  = {!!}
+funExt⁻ p x i = p i x
 ```
 
 ### Exercise 6 (★★)
@@ -83,7 +100,7 @@ Use funExt⁻ to prove isSetΠ:
 
 ```agda
 isSetΠ : (h : (x : A) → isSet (B x)) → isSet ((x : A) → B x)
-isSetΠ = {!!}
+isSetΠ h  f g  p q  i j  x = h x (f x) (g x) (funExt⁻ p x) (funExt⁻ q x) i j
 ```
 
 ### Exercise 7 (★★★): alternative contractibility of singletons
@@ -100,7 +117,13 @@ Prove the corresponding version of contractibility of singetons for
 
 ```agda
 isContrSingl' : (x : A) → isContr (singl' x)
-isContrSingl' x = {!!}
+isContrSingl' x = c , contr
+  where
+    c : singl' x
+    c = x , refl
+
+    contr : (y : singl' x) → c ≡ y
+    contr (y , p) i = (p (~ i)) , λ j → p (~ i ∨ j)
 ```
 
 ## Part III: Equality in Σ-types
@@ -118,17 +141,17 @@ module _ {A : Type ℓ} {B : A → Type ℓ'} {x y : Σ A B} where
 
   ΣPathP : Σ p ꞉ pr₁ x ≡ pr₁ y , PathP (λ i → B (p i)) (pr₂ x) (pr₂ y)
          → x ≡ y
-  ΣPathP = {!!}
+  ΣPathP (p , P) i = (p i) , (P i)
 
   PathPΣ : x ≡ y
          → Σ p ꞉ pr₁ x ≡ pr₁ y , PathP (λ i → B (p i)) (pr₂ x) (pr₂ y)
-  PathPΣ = {!!}
+  PathPΣ p = apd pr₁ p , apd pr₂ p
 
   ΣPathP-PathPΣ : ∀ p → PathPΣ (ΣPathP p) ≡ p
-  ΣPathP-PathPΣ = {!!}
+  ΣPathP-PathPΣ p = refl
 
   PathPΣ-ΣPathP : ∀ p → ΣPathP (PathPΣ p) ≡ p
-  PathPΣ-ΣPathP = {!!}
+  PathPΣ-ΣPathP p = refl
 ```
 
 If one looks carefully the proof of prf in Lecture 7 uses ΣPathP
@@ -157,7 +180,27 @@ Prove
 
 ```agda
 suspUnitChar : Susp Unit ≡ Interval
-suspUnitChar = {!!}
+suspUnitChar = isoToPath (iso to fro toFro froTo)
+  where
+    to : Susp Unit → Interval
+    to north = zero
+    to south = one
+    to (merid a i) = seg i
+    
+    fro : Interval → Susp Unit
+    fro zero = north
+    fro one = south
+    fro (seg i) = merid ⋆ i
+
+    toFro : section to fro
+    toFro zero = refl
+    toFro one = refl
+    toFro (seg i) = refl
+
+    froTo : retract to fro
+    froTo north = refl
+    froTo south = refl
+    froTo (merid a i) = refl
 ```
 
 
@@ -172,7 +215,23 @@ The goal of this exercise is to prove
 
 ```agda
 suspBoolChar : Susp Bool ≡ S¹
-suspBoolChar = {!!}
+suspBoolChar = isoToPath (iso to fro toFro froTo)
+  where
+    to : Susp Bool → S¹
+    to north = base
+    to south = base
+    to (merid true i) = loop i
+    to (merid false i) = refl i
+    
+    fro : S¹ → Susp Bool
+    fro base = north
+    fro (loop i) = ((merid true) ∙ sym (merid false)) i
+
+    toFro : section to fro
+    toFro = {!   !}
+
+    froTo : retract to fro
+    froTo = {!   !}
 ```
 
 For the map `Susp Bool → S¹`, we have to specify the behavior of two

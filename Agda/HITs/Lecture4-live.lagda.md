@@ -14,7 +14,7 @@ module Lecture4-live where
   -}
   
   postulate
-    S1 : Type 
+    S1 : Type
     base : S1
     loop : base ≡ base [ S1 ]
 

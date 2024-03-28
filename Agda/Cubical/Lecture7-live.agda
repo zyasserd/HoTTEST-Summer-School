@@ -86,15 +86,15 @@ double : S¹ → S¹
 double base = base
 double (loop i) = (loop ∙ loop) i
 
-helix : S¹ → Type
-helix base = ℤ
-helix (loop i) = sucPath i
+-- helix : S¹ → Type
+-- helix base = ℤ
+-- helix (loop i) = sucPath i
 
-winding : base ≡ base → ℤ
-winding p = transp (λ i → helix (p i)) i0 (pos 0)
+-- winding : base ≡ base → ℤ
+-- winding p = transp (λ i → helix (p i)) i0 (pos 0)
 
-_ : winding (loop ∙ loop) ≡ pos 2
-_ = refl
+-- _ : winding (loop ∙ loop) ≡ pos 2
+-- _ = refl
 
 -- Following Dan's lecture one can prove that winding is an equivalence
 -- using the encode-decode, see Cubical.HITs.S1.Base

@@ -78,6 +78,23 @@ _∙∙_∙∙_ : {x y z w : A} → x ≡ y → y ≡ z → z ≡ w → x ≡ w
 (p ∙∙ q ∙∙ r) i = hcomp (λ j → λ { (i = i0) → p (~ j)
                                  ; (i = i1) → r j })
                         (q i)
+
+
+-- ! an experiment to obtain hcomp from hfill
+-- sides : {x y z w : A} (p : x ≡ y) (r : z ≡ w)
+--                  → (i : I) (j : I) → Partial (i ∨ ~ i) A
+-- sides p r i j (i = i0) = p (~ j)
+-- sides p r i j (i = i1) = r j
+
+-- full : {x y z w : A} (p : x ≡ y) (q : y ≡ z) (r : z ≡ w)
+--                       → PathP (λ j → p (~ j) ≡ r j) q (p ∙∙ q ∙∙ r)
+-- full p q r j i =
+--   hfill (sides p r i) (inS (q i)) j
+
+-- _∙∙_∙∙'_ : {x y z w : A} → x ≡ y → y ≡ z → z ≡ w → x ≡ w
+-- (p ∙∙ q ∙∙' r) i = full p q r i1 i
+
+
 ```
 
 Using this we can define `compPath` much slicker:
@@ -127,7 +144,7 @@ partialBool i (i = i0) = true
 partialBool i (i = i1) = false
 ```
 
-The term `partialBool i` should be thought of a boolean with different
+The term `partialBoo l i` should be thought of a boolean with different
 values when `(i = i0)` and `(i = i1)`. Note that this is different
 from pattern matching on the interval which is not allowed, so we
 couldn't have written:
@@ -175,7 +192,7 @@ hcomp : {A : Type ℓ} {φ : I} (u : I → Partial φ A) (u0 : A) → A
 When calling `hcomp {φ = φ} u u0` Agda makes sure that `u0` agrees
 with `u i0` on `φ`. The result is then an element of `A` which agrees
 with `u i1` on `φ`. The idea being that `u0` is the base and `u`
-specifies the sides of an open box while `hcomp u u0` is the lid of
+specifies the sides of an open box while `  hcomp u u0` is the lid of
 the box. In fact, we can use yet another cubical construction to
 specify these side conditions in the type of `hcomp`. For this we need
 to talk about cubical subtypes.
@@ -227,7 +244,7 @@ hcomp' u u0 = inS (hcomp u (outS u0))
 
 This more specific type is of course more informative, but it quickly
 gets quite annoying to write `inS`/`outS` everywhere. So the builtin
-`hcomp` operation comes with the slightly less informative type and
+`hcomp` operation comes with the slightly less  informative type and
 the side conditions are then implicit and checked internally.
 
 Another very useful operation is open box *filling*. This produces an

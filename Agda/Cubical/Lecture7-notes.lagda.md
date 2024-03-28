@@ -359,9 +359,9 @@ circle. We first define a family of types over the circle with
 fibers being the integers.
 
 ```agda
-helix : S¹ → Type₀
-helix base     = ℤ
-helix (loop i) = sucPath i
+-- helix : S¹ → Type₀
+-- helix base     = ℤ
+-- helix (loop i) = sucPath i
 ```
 
 Here univalence is baked into `sucPath : ℤ ≡ ℤ`. The loopspace of the
@@ -376,8 +376,8 @@ and we can then define a function computing how many times we've
 looped around the circle by:
 
 ```agda
-winding : ΩS¹ → ℤ
-winding p = transp (λ i → helix (p i)) i0 (pos 0)
+-- winding : ΩS¹ → ℤ
+-- winding p = transp (λ i → helix (p i)) i0 (pos 0)
 ```
 
 Here `transp` is a cubical transport function. We'll talk about it in
@@ -385,8 +385,8 @@ more detail in the next lecture, but for now we can observe that it
 reduces as expected:
 
 ```agda
-_ : winding (λ i → double ((loop ∙ loop) i)) ≡ pos 4
-_ = refl
+-- _ : winding (λ i → double ((loop ∙ loop) i)) ≡ pos 4
+-- _ = refl
 ```
 
 This would not reduce definitionally in Book HoTT as univalence is an
@@ -457,19 +457,19 @@ t2c-c2t (loop _ , loop _) = refl
 Using univalence we get the following equality:
 
 ```agda
-Torus≡S¹×S¹ : Torus ≡ S¹ × S¹
-Torus≡S¹×S¹ = isoToPath (iso t2c c2t t2c-c2t c2t-t2c)
+-- Torus≡S¹×S¹ : Torus ≡ S¹ × S¹
+-- Torus≡S¹×S¹ = isoToPath (iso t2c c2t t2c-c2t c2t-t2c)
 ```
 
 We can also directly compute winding numbers on the torus
 
 ```agda
-windingTorus : point ≡ point → ℤ × ℤ
-windingTorus l = ( winding (λ i → pr₁ (t2c (l i)))
-                 , winding (λ i → pr₂ (t2c (l i))))
+-- windingTorus : point ≡ point → ℤ × ℤ
+-- windingTorus l = ( winding (λ i → pr₁ (t2c (l i)))
+--                  , winding (λ i → pr₂ (t2c (l i))))
 
-_ : windingTorus (line1 ∙ sym line2) ≡ (pos 1 , negsuc 0)
-_ = refl
+-- _ : windingTorus (line1 ∙ sym line2) ≡ (pos 1 , negsuc 0)
+-- _ = refl
 ```
 
 # Bonus content if there is time

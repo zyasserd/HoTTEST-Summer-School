@@ -76,13 +76,13 @@ Having the ability to define set quotients using `_/_` lets us do many
 examples from mathematics and computer science. For example we can
 define the integers as:
 
-```agda
+
 ℤ' : Type
 ℤ' = (ℕ × ℕ) / rel
   where
   rel : ℕ × ℕ → ℕ × ℕ → Type
   rel (x₀ , y₀) (x₁ , y₁) = x₀ + y₁ ≡ x₁ + y₀
-```
+  
 
 If you haven't seen this construction before see
 https://en.wikipedia.org/wiki/Integer#Construction
@@ -165,7 +165,7 @@ these recursors and eliminators and one get very short proofs.
 A more efficient version of finite multisets based on association
 lists can be found in Cubical.HITs.AssocList.Base. It looks like this:
 
-```agda
+
 data AssocList (A : Type ℓ) : Type ℓ where
   ⟨⟩ : AssocList A
   ⟨_,_⟩∷_ : (a : A) (n : ℕ) (xs : AssocList A) → AssocList A
@@ -175,7 +175,7 @@ data AssocList (A : Type ℓ) : Type ℓ where
       → ⟨ a , m ⟩∷ ⟨ a , n ⟩∷ xs ≡ ⟨ a , m + n ⟩∷ xs
   del : (a : A) (xs : AssocList A) → ⟨ a , 0 ⟩∷ xs ≡ xs
   trunc : (xs ys : AssocList A) (p q : xs ≡ ys) → p ≡ q
-```
+
 
 Programming and proving is more complicated with `AssocList` compared
 to `FMSet`. This kind of example occurs a lot in programming and
@@ -278,6 +278,7 @@ eliminator for paths (a.k.a. path induction):
 ```agda
 J : {x : A} (P : (y : A) → x ≡ y → Type ℓ'')
     (d : P x refl) {y : A} (p : x ≡ y) → P y p
+-- isContrSingl x .pr₂ (_ , p)
 J {x = x} P d p = subst (λ X → P (pr₁ X) (pr₂ X)) (isContrSingl x .pr₂ (_ , p)) d
 ```
 
@@ -378,4 +379,4 @@ References
 ==========
 
 [1] https://arxiv.org/abs/1611.02108
-[2] https://staff.math.su.se/anders.mortberg/papers/cubicalagda2.pdf
+[2] https://staff.math.su.se/anders.mortber g/papers/cubicalagda2.pdf

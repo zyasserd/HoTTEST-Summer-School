@@ -21,10 +21,16 @@ these items up as an equivalence S1 ≃ Circle2.
 
 ```agda
 to-from : (x : S1) → from (to x) ≡ x
-to-from = {!!}
+to-from = S1-elim (\ x → from (to x) ≡ x) to-from-base (PathOver-roundtrip≡ from to loop (∙unit-l _ ∙ to-from-loop))
 
 circles-equivalent : S1 ≃ Circle2
-circles-equivalent = {!!}
+circles-equivalent = improve (Isomorphism to (Inverse from gf fg))
+  where
+    gf : (from ∘ to) ∼ id
+    gf = to-from
+
+    fg : (to ∘ from) ∼ id
+    fg = from-to
 ```
 
 # Reversing the circle (⋆⋆) 
@@ -34,15 +40,33 @@ i.e. sends loop to ! loop.
 
 ```agda
 rev : S1 → S1
-rev = {!!}
+rev = S1-rec base ((! loop))
 ```
 
 Prove that rev is an equivalence.  Hint: you will need to state and prove
 one new generalized "path algebra" lemma and to use one of the lemmas from
 the "Functions are group homomorphism" section of Lecture 4's exercises.  
 ```agda
+
+double-inv : {A : Type} {a b : A} (p : a ≡ b)
+             → (! (! p)) ≡ p
+double-inv (refl _) = refl _
+
+involution-loop : ap rev (ap rev loop) ≡ loop
+involution-loop = ap rev (ap rev loop) ≡⟨ ap (ap rev) (S1-rec-loop _ _) ⟩
+                  ap rev (! loop)      ≡⟨ ap-! _ ⟩
+                  ! (ap rev loop)      ≡⟨ ap ! (S1-rec-loop _ _) ⟩
+                  ! (! loop)           ≡⟨ double-inv _ ⟩
+                  loop ∎
+
 rev-equiv : is-equiv rev
-rev-equiv = {!!}
+rev-equiv = Inverse rev H rev H
+  where 
+    H : rev ∘ rev ∼ id
+    H = S1-elim (\ x → (rev ∘ rev) x ≡ id x)
+                (refl base)
+                (PathOver-roundtrip≡ rev rev loop (∙unit-l _ ∙ involution-loop))
+
 ```
 
 
@@ -58,16 +82,58 @@ path in a path fibration.  Then, to define the map S1 × S1 → Torus, you
 will want to curry it and use S1-rec and/or S1-elim on each circle.  
 
 ```agda
+{-# BUILTIN NATURAL ℕ #-}
+
+postulate
+  myBool : Type
+  t : myBool
+  f : myBool
+
+  myBool-elim : (X : myBool → Type)
+                (p0 : X f)
+                (p1 : X t)
+              → (x : myBool) → X x
+
+  myBool-elim-false : (X : myBool → Type)
+                      (p0 : X f)
+                      (p1 : X t)
+                    → (myBool-elim X p0 p1 f) ≡ p0
+
+  myBool-elim-true  : (X : myBool → Type)
+                      (p0 : X f)
+                      (p1 : X t)
+                    → (myBool-elim X p0 p1 t) ≡ p1
+
+{-# REWRITE myBool-elim-false #-}
+{-# REWRITE myBool-elim-true  #-}
+              
+boolToF2 : myBool → ℕ
+boolToF2 = myBool-elim (\ _ → ℕ) 0 1
+
+boolToF4 : myBool → myBool → ℕ
+boolToF4 = myBool-elim _ (myBool-elim _ 0 1) (myBool-elim _ 2 3)              
+
+------------------
+
 PathOver-path≡ : ∀ {A B : Type} {g : A → B} {f : A → B}
                           {a a' : A} {p : a ≡ a'}
                           {q : (f a) ≡ (g a)}
                           {r : (f a') ≡ (g a')}
-                        → {!!}
+                        → q ∙ (ap g p) ≡ (ap f p) ∙ r
                         → q ≡ r [ (\ x → (f x) ≡ (g x)) ↓ p ]
-PathOver-path≡ {A}{B}{g}{f}{a}{a'}{p}{q}{r} h = {!!}
+PathOver-path≡ {A} {B} {g} {f} {a} {.a} {refl .a} {q} {r} h = path-to-pathover (h ∙ ∙unit-l _)
+
+to-torus-base : S1 → Torus
+to-torus-base = S1-rec baseT qT
+
+thePath : pT ≡ pT [ (\ x → to-torus-base x ≡ to-torus-base x) ↓ loop ]
+thePath = PathOver-path≡ (ap (pT ∙_) (S1-rec-loop baseT qT) ∙   sT ∙ ap (_∙ pT) (! (S1-rec-loop baseT qT)))
+
+to-torus-loop : (x : S1) → (to-torus-base x ≡ to-torus-base x)
+to-torus-loop = S1-elim _ pT thePath
 
 circles-to-torus : S1 → (S1 → Torus)
-circles-to-torus = {!!}
+circles-to-torus = S1-rec to-torus-base (λ≡ to-torus-loop)
 
 circles-to-torus' : S1 × S1 → Torus
 circles-to-torus' (x , y) = circles-to-torus x y
